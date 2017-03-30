@@ -1,0 +1,88 @@
+
+
+              MandelSpawn, a network Mandelbrot program
+
+                             Version 0.07
+
+
+This is MandelSpawn, a network Mandelbrot program.  It lets you
+calculate pictures of the Mandelbrot and Julia sets in parallel on
+several machines.
+
+MandelSpawn is GNU-style free software and is available under the GNU
+General Public License, version 1.  See the file COPYING for details.
+
+MandelSpawn runs under most versions of Unix.  The parallel processing
+features require networking support and interactive use requires X11, 
+but stripped-down versions can be built for more restricted systems.
+
+MandelSpawn includes two different front-end programs: "xms" for
+interactive use with X11, and "bms" for noninteractive batch-mode
+calculation.
+
+The actual calculations are performed by one or more separate
+"compuation server" processes running on different machines (or
+different CPUs on the same machine).  Typically the additional
+machines are workstations that are mostly idle or doing bursty,
+interactive work.  Because the servers are very compact and run at
+nice 10 by default, they don't cause any noticeable performance
+degradation.  The server machines don't need to run X, and different
+types of machines can be mixed freely.
+
+MandelSpawn is fault-tolerant in the sense that it can recover from
+servers becoming heavily loaded or crashing in the middle of the
+computation.  
+
+If you are using a Vax, i386 or 680x0, you are likely to get better
+performance by using fixed-point arithmetic instead of floating point.
+To take advantage of the inline assembly language fixed-point support,
+you need to compile the computation server with GCC version 1.36 or
+newer.
+
+New features in version 0.07 include support for HP 9000/700-series
+machines, DEC Alphas, Linux, 24-bit color displays, and non-default X
+visuals.  The rubberband box can now be manipulated while calculation
+is in progress.  Several bugs have been fixed.
+
+This release of MandelSpawn has been tested and found to compile and
+run without changes on PCs running 386BSD or Linux, DEC Alphas running
+OSF/1 V1.2, HP 700-series machines running HP-UX 8.07, Sun SPARCs
+running SunOS 4.1.1 with OpenWindows 3, and IBM RS/6000 workstations
+running AIX.  Previous versions have been successfully run on at least
+Sun 3, Sony NEWS, MicroVAX II/4.3BSD, i386/Mach, and MIPS-based
+DECstation systems.
+
+MandelSpawn was developed as a student project at the Helsinki
+University of Technology Computer Science Laboratory.
+
+MandelSpawn is not related to the distributed Mandelbrot program by
+Rob Swiston and Chuck Simmons that was posted to alt.sources in April,
+1990, despite a surprising number of similarities.  To my knowledge,
+the two programs have been developed completely independently.
+
+New releases of MandelSpawn are usually made available through
+the MandelSpawn home page at http://www.araneus.fi/gson/mandelspawn.
+
+This distribution is divided into four subdirectories:
+
+	xms/        The X11-based interactive client program
+	bms/        The batch-mode client program
+	mslaved/    The computation server
+	lib/	    Code shared by the above
+
+In client-only, server-only, and/or X-less installations, only the
+appropriate directory and the lib directory need to be present.
+
+The file TO_DO contains some random notes about work to be done.
+Contributions are welcome.
+
+Please read the INSTALL file carefully before installing.
+
+-- 
+					Andreas Gustafsson
+					email: gson@araneus.fi
+
+					Snail-mail:
+					Andreas Gustafsson
+					Puosunrinne 4 C 47
+					SF-02320 Espoo

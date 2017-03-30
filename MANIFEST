@@ -1,0 +1,58 @@
+This MandelSpawn distribution should contain the following files:
+
+./README              	general information
+./INSTALL		installation guide
+./TO_DO               	things yet to be done
+./COPYING             	the GNU General Public License, version 1
+./MANIFEST            	this file
+./ChangeLog           	recent changes
+./Makefile		top-level Makefile
+
+./xms/Imakefile           Imakefile for the client only
+./xms/noImakefile         rudimentary makefile for imake-less users
+./xms/main.c              the main program
+./xms/Mama.c              parallelism & general supervisory stuff
+./xms/Mama.h               - public header for the above
+./xms/MamaP.h              - private header for the above
+./xms/Ms.c                graphics & interaction
+./xms/Ms.h                 - public header for the above
+./xms/MsP.h                - public header for the above
+./xms/xio.c               Xt-based I/O multiplexing
+./xms/menu.c              popup menu using the X11R4 SimpleMenu widget
+./xms/label.c             underflow error message using Label widget
+./xms/xms.man             manual page for the client program
+./xms/backward.h          X11R2 backwards compatibility hacks
+./xms/dot-mslaves         sample /usr/local/etc/mslaves (or .mslaves) file
+
+./bms/Makefile            makefile for bms
+./bms/bms.1               manual page for bms
+./bms/bms.c               main program for bms
+
+./mslaved/Makefile        makefile for the computation server
+./mslaved/ms_real.c       mathematical functions
+./mslaved/mslaved.c       a sample computation server
+./mslaved/mslaved.8        - manual page for the above
+./mslaved/mslavedc.c      launcher for mslaved (for those not using inetd)
+./mslaved/mslavedc.8       - manual page for the above
+./mslaved/enslave         server startup script for those not using inetd
+./mslaved/enslave.1        - manual page for the above
+./mslaved/dot-enslave     sample .enslave file
+
+./lib/Makefile		  makefile for the library
+./lib/ms_ipc.h            definitions related to server-client communication
+./lib/ms_job.h            definition of a work packet
+./lib/ms_real.h           definitions for fixed-point arithmetic
+./lib/datarep.h		  definitions for network data representation
+./lib/work.c              work distribution
+./lib/work.h               - header for the above
+./lib/mspawn.c            X independent application code
+./lib/mspawn.h             - header for the above
+./lib/version.h           current version number
+./lib/cmap.c		  colormap support
+./lib/color.h		  color definitions
+./lib/colors.c            table of color names
+./lib/parse.c		  parse textual representation of colors
+./lib/inet.h              network support
+./lib/io.c		  slave communications
+./lib/io.h		   - header for the above
+./lib/strdup.c		  strdup() replacement

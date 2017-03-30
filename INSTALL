@@ -1,0 +1,219 @@
+
+
+                 MandelSpawn Installation Guide
+
+
+This file contains step-by-step instructions for compiling and
+installing MandelSpawn.  
+
+
+COMPILING THE LIBRARY
+
+The library "libms.a" is required by all the programs, so it
+must be compiled first.  Go to the lib/ subdirectory, read the
+Makefile, edit it if necessary, and run make.
+
+
+COMPILING MSLAVED
+
+The next step is to build the computation server "mslaved" and
+the associated control program "mslavedc".
+
+Go to the mslaved/ subdirectory, read the Makefile and edit it if
+necessary.  
+
+Silicon Graphics IRIX users may need to insert the line 
+"#undef TIOCNOTTY" before the "#ifdef TIOCNOTTY" line in mslavedc.c.
+
+If you are using a Vax, 680x0 or i386, consider using GCC to take
+advantage of the fixed-point arithmetic support.  Using GCC together
+with an assembler other than GAS may cause problems on some machines;
+in this case you may need to edit the few lines of inline assembly in
+ms_real.c.  Note that truly ancient versions of GCC (pre-1.36) won't
+work.
+
+Run make.
+
+
+COMPILING BMS
+
+Next, build the batch-mode client program "bms".  Go to the bms/
+subdirectory, read the Makefile, edit it if necessary, and run Make.
+
+
+COMPILING XMS
+
+Next, build the X-based client program "xms".  If you don't have X,
+skip this step.
+
+Xms itself should build and using the normal Imake procedure (e.g., by
+running xmkmf, make depend, and make).  You are strongly encouraged to
+use Imake, but if you can't for some reason, then just copy the file
+noImakefile to Makefile and edit it as necessary.
+
+MandelSpawn requires X11R4 or newer and uses the Xlib, Xt, and Xaw
+libraries.  The noImakefile includes some additional instructions for
+building a stripped-down version if you don't have Xaw or if you have
+an older version of the X libraries.
+
+    * Notes to Mach users:
+
+    You may also need to include the option "-chunk_height 16" when
+    running MandelSpawn with iterations counts larger than 256 because of
+    limits on UDP message size.
+
+    If you are running Mach/i386 you may have a broken floor() library
+    function, causing incorrect colour interpolation.  A workaround can be
+    enabled by defining the symbol BROKEN_FLOOR when compiling Mama.c.
+
+    * Notes to Sony users:
+
+    Sony's X11R4 server for the NWS-1510 with a 4-bit greyscale display
+    has a bug that causes it to crash when running MandelSpawn.  If you
+    have this problem, try giving MandelSpawn the workaround option
+    "-sony".
+
+
+TESTING BEFORE INSTALLING
+
+When you have built the programs, it is a good idea to test them
+before installing them in a public place.  Here is how to test
+MandelSpawn by running the programs on a single host:
+
+  1. Create a ".mslaves" file in your home directory, containing
+     a single line with the hostname of your local host (or the
+     single word "localhost").
+
+  2. Start the computation server by going to the mslaved/ subdirectory
+     and saying "mslavedc ./mslaved".  Nothing is printed on the
+     terminal, but "ps -x" (BSD) or "ps -ef" (System V) should
+     show the mslaved daemon process running.
+
+  3. Go to the bms/ directory and say "bms -ascii | more".  If all is
+     well, you should get a few hundred lines of output beginning with
+
+	P2
+	64 24
+	249
+	1 1 1 1 1 1 1 1
+	1 1 1 2 2 3 3 3
+	3 3 3 3 3 3 3 3
+	3 4 4 4 4 4 5 6
+	6 6 7 8 22 249 249 249
+
+     If bms doesn't get a response from mslaved, it will keep
+     retrying indefinitely.  If that happens, just abort with
+     control-C and make sure you really have mslaved running.
+
+  4. If you are running X, go to the xms/ directory and say "xms".  A
+     window should appear and slowly fill by pieces of the Mandelbrot
+     set.  Like bms, xms will wait indefinitely for mslaved to
+     respond, so if mslaved isn't running the window will stay blank.
+     You can quit xms by pressing "q" or by using the pop-up menu
+     activated by mouse button 3.
+
+  5. When you are finished, kill the mslaved process by going to the
+     mslaved/ directory and saying "mslavedc -k".
+
+
+INSTALLING THE PROGRAMS
+
+The recommended installation procedure is to install the program
+binaries and control files in the appropriate system-wide, public
+directories and to arrange for mslaved to be started automatically
+from inetd.  If you can't do this for some reason (e.g., if you don't
+have root privileges or if you believe mslaved to be a security risk),
+see the next section for instructions how to install MandelSpawn for
+personal use only.
+
+The following steps must be done as root on each machine.  On machines
+that are to work only as computation servers, there is no need to
+install bms, xms, or /usr/local/etc/mslaves.
+
+ 1. Install the following programs in some public directory:
+
+     Program			Recommended location
+
+     bms/bms			/usr/local/bin
+     xms/xms			/usr/bin/X11
+     mslaved/mslaved		/usr/local/etc
+     mslaved/mslavedc		/usr/local/etc
+     mslaved/enslave		/usr/local/bin
+
+ 2. Install the following man pages in the appropriate directories:
+
+     xms/xms.man
+     bms/bms.1
+     mslaved/mslaved.8
+     mslaved/mslavedc.8
+     mslaved/enslave.1
+
+ 3. Create a file "/usr/local/etc/mslaves" containing the hostnames of
+    all the machines running computation servers (possibly including
+    the local host), one per line.  The file mslaved/dot-mslaves is a
+    sample file containing made-up hostnames.  If you wish to install
+    this file in a location other than /usr/local/etc, you must also
+    change the definition of PUBLIC_SLAVEFILE in lib/work.c.
+
+    If you created a .mslaves file in your home directory during the
+    testing phase, remove it unless you want it to override the
+    information in /usr/local/etc/mslaves.
+
+ 4. Add a line like the following to /etc/services (if you are running
+    NIS (nee Yellow Pages), you may need to do this on the central NIS/YP
+    server):
+
+     mandelspawn	9359/udp	mandelbrot	# network mandelbrot
+
+  5. Add a line like the following to /etc/inetd.conf:
+
+     mandelspawn dgram udp	wait	nobody  /usr/local/etc/mslaved mslaved
+
+    (The above instructions apply to 4.3BSD and should also work as
+    such with SunOS 4.0 and up.  Some older systems, such as SunOS
+    versions older than 4.0, may need different treatment in step 3
+    and/or 4.  In particular, they may use a file /etc/servers instead
+    of /etc/inetd.conf, with a slightly different syntax.)
+
+    (When installing under IRIX, inetd may get confused if the
+    username "nobody" (UID -2) is used in /etc/inetd.conf, causing it
+    to log numerous error messages saying "can't set gid 65534".  If
+    you have similar problems, use another username instead).
+
+    (Ultrix seems to have no username field at all in inetd.conf.  If
+    this is the case for your system, then just leave out the
+    "nobody").
+
+ 6. Send a hangup signal to inetd using "kill -1" to make it read the
+    changed /etc/inetd.conf.
+
+
+INSTALLING FOR PERSONAL USE
+
+As an alternative to the above site-wide installation procedure, you
+can install MandelSpawn for personal use only.
+
+In this case, you will need to start your own computation servers
+manually before each MandelSpawn session.  The shell script 
+"mslaved/enslave" can be used to do this semi-automatically for
+the hosts listed in the file ".enslave" in your home directory.
+A sample ".enslave" file is supplied in "mslaved/dot-enslave".
+For more info, se the enslave(1) man page.
+
+You don't need to kill the servers explicitly after the session,
+because they time out and die when they have been idle for 15 minutes.
+
+If "rsh" on your system means "restricted shell" rather than "remote
+shell", you need to edit the "RSH=" line near the beginning of the
+"enslave" script.
+
+
+REPORTING BUGS
+
+Please report any bugs you find, no matter how insignificant, to
+gson@niksula.hut.fi.  
+
+Please remember to state your computer model, operating system and
+version, X toolkit version, and MandelSpawn version (from running 
+"xms -version" or "bms -version").  Also remember to include the exact
+error message you are getting.

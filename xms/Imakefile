@@ -1,0 +1,24 @@
+# Imakefile for MandelSpawn
+
+MSLIB=../lib/libms.a
+
+/* For X11R4 or newer */
+R4_DEFINES = -DR4 -DMENU -DLABEL
+MENUSRC = menu.c label.c
+MENUOBJ = menu.o label.o
+DEPLIBS = XawClientDepLibs $(MSLIB)
+LOCAL_LIBRARIES = XawClientLibs $(MSLIB)
+
+/* Use this with X11R2 or X11R3 to elide the Xaw menu */
+# DEPLIBS = $(DEPXTOOLLIB) $(DEPXLIB) $(MSLIB)
+# LOCAL_LIBRARIES =  $(XTOOLLIB) $(XLIB) $(MSLIB)
+
+CDEBUGFLAGS = -g
+
+DEFINES = $(R4_DEFINES)
+EXTRA_INCLUDES = -I../lib
+SYS_LIBRARIES = -lm
+SRCS = main.c Ms.c Mama.c xio.c $(MENUSRC)
+OBJS = main.o Ms.o Mama.o xio.o $(MENUOBJ)
+
+ComplexProgramTarget(xms)
